@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression</title>
+    <style>
+        body {
+            background-color: #1a1a1d;
+            color: #e6e6e6;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(40, 44, 52, 0.8);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #ff6f61;
+        }
+        .button {
+            padding: 0.8rem 1.5rem;
+            background-color: #ff6f61;
+            border: none;
+            border-radius: 4px;
+            color: #1a1a1d;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background-color: #ff4941;
+            transform: scale(1.05);
+        }
+        .download-links {
+            margin-top: 1.5rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Compress Image</h1>
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data" onsubmit="submitForm(event)">
+            <label for="compression">Select Compression Level:</label>
+            <select id="compression" name="compression">
+                <option value="0.5">50%</option>
+                <option value="0.7">70%</option>
+                <option value="0.9">90%</option>
+            </select>
+            <br><br>
+            <input type="file" name="image" accept="image/*" required>
+            <br><br>
+            <button type="submit" class="button">Upload & Compress</button>
+        </form>
+        <div class="download-links" id="downloadLinks">
+            <a id="originalLink" class="button" href="#">Download Original Image</a>
+            <a id="compressedLink" class="button" href="#">Download Compressed Image</a>
+        </div>
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('originalLink').href = data.original_url;
+                document.getElementById('compressedLink').href = data.compressed_url;
+                document.getElementById('downloadLinks').style.display = 'flex';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
